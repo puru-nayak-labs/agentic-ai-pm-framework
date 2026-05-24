@@ -1,0 +1,894 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Agentic AI Product Framework · Puru Nayak</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0a0a0a;--paper:#f4f1eb;--accent:#c8391a;--gold:#c9a84c;--blue:#1a4fa8;--green:#1a7a45;--purple:#5c1a8a;--muted:#6b6560;--rule:#d8d3c8;--card:#fff;--surface:#f9f7f3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.7;overflow-x:hidden;}
+.masthead{background:var(--ink);padding:11px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--accent);position:sticky;top:0;z-index:999;flex-wrap:wrap;gap:8px;}
+.masthead-brand{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);}
+.masthead-nav{display:flex;gap:4px;flex-wrap:wrap;}
+.nav-btn{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#888;padding:5px 9px;border:1px solid #333;cursor:pointer;background:transparent;transition:all .2s;white-space:nowrap;}
+.nav-btn:hover,.nav-btn.active{border-color:var(--gold);color:var(--gold);}
+.stage-page{display:none;animation:fadeUp .35s ease both;}
+.stage-page.visible{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.hero{background:var(--ink);color:var(--paper);padding:64px 40px 56px;}
+.hero-inner{max-width:1100px;margin:0 auto;}
+.hero-tag{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.hero-tag::before{content:'';display:inline-block;width:28px;height:2px;background:var(--gold);}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5.5vw,60px);font-weight:900;line-height:1.05;letter-spacing:-2px;margin-bottom:16px;}
+.hero h1 em{font-style:italic;color:var(--accent);}
+.hero-sub{font-size:15px;color:rgba(245,241,235,.7);max-width:660px;line-height:1.65;margin-bottom:36px;}
+.hero-meta{display:flex;gap:28px;flex-wrap:wrap;padding-top:8px;border-top:1px solid #222;}
+.hero-stat-num{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--accent);line-height:1;display:block;}
+.hero-stat-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,241,235,.5);}
+.about-band{background:#111;}
+.about-inner{max-width:1100px;margin:0 auto;padding:36px 40px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;}
+.about-left p{font-size:13.5px;color:rgba(245,241,235,.65);line-height:1.7;margin-bottom:10px;}
+.about-right{display:flex;flex-direction:column;gap:14px;}
+.usage-item{border-left:3px solid var(--gold);padding-left:14px;}
+.usage-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:3px;display:block;}
+.usage-text{font-size:12.5px;color:rgba(245,241,235,.65);line-height:1.6;}
+.pipeline-bar{background:var(--ink);border-top:1px solid #222;border-bottom:3px solid var(--accent);}
+.pipeline-inner{max-width:1100px;margin:0 auto;padding:0 40px;}
+.pipeline-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#555;padding:10px 0 8px;}
+.pipeline-track{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.pipe-step{padding:12px 10px;background:#1a1a1a;color:var(--paper);cursor:pointer;transition:all .2s;text-align:center;border-top:2px solid transparent;}
+.pipe-step:hover,.pipe-step.active-step{background:var(--accent);border-top-color:var(--gold);}
+.pipe-step-num{font-family:'DM Mono',monospace;font-size:9px;color:#555;display:block;margin-bottom:4px;letter-spacing:2px;}
+.pipe-step.active-step .pipe-step-num{color:rgba(255,255,255,.55);}
+.pipe-step-name{font-size:10px;font-weight:600;line-height:1.3;}
+
+/* STAGE PROGRESS BAR — replaces black diagram box */
+.stage-progress{margin:0 0 32px;padding:16px 0 0;}
+.sp-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.sp-track{display:flex;align-items:center;gap:0;position:relative;}
+.sp-step{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;cursor:pointer;}
+.sp-step:not(:last-child)::after{content:'';position:absolute;top:14px;left:50%;width:100%;height:2px;background:var(--rule);z-index:0;}
+.sp-step.done::after{background:var(--accent);opacity:.4;}
+.sp-step.active-sp::after{background:var(--rule);}
+.sp-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:9px;font-weight:500;position:relative;z-index:1;transition:all .2s;}
+.sp-step.done .sp-dot{background:var(--accent);color:#fff;opacity:.55;}
+.sp-step.active-sp .sp-dot{background:var(--accent);color:#fff;box-shadow:0 0 0 4px rgba(200,57,26,.15);width:34px;height:34px;font-size:10px;}
+.sp-step.upcoming .sp-dot{background:var(--card);border:2px solid var(--rule);color:var(--muted);}
+.sp-name{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;margin-top:7px;text-align:center;line-height:1.3;color:var(--muted);}
+.sp-step.active-sp .sp-name{color:var(--accent);font-weight:500;}
+.sp-step.done .sp-name{color:var(--accent);opacity:.5;}
+.sp-output{margin-top:12px;padding:8px 14px;background:rgba(200,57,26,.06);border-left:3px solid var(--accent);font-size:12px;color:var(--muted);}
+.sp-output strong{color:var(--accent);font-size:10px;font-family:'DM Mono',monospace;letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:2px;}
+
+.stage-hero{padding:32px 0 28px;border-bottom:1px solid var(--rule);margin-bottom:32px;}
+.stage-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+.stage-hero h2{font-family:'Playfair Display',serif;font-size:clamp(26px,3.5vw,40px);font-weight:900;letter-spacing:-1px;line-height:1.1;}
+.stage-hero h2 em{color:var(--accent);font-style:italic;}
+.stage-hero-desc{font-size:14.5px;color:var(--muted);max-width:700px;margin-top:10px;line-height:1.65;}
+.stage-meta{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap;}
+.stage-badge{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border:1.5px solid var(--rule);color:var(--muted);}
+.stage-badge.accent{border-color:var(--accent);color:var(--accent);}
+.content-wrap{max-width:1100px;margin:0 auto;padding:0 40px 100px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:24px;}
+.four-col{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:24px;}
+.card{background:var(--card);border:1px solid var(--rule);padding:22px 18px;}
+.card-hd{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.card-hd::before{content:'';display:inline-block;width:12px;height:2px;background:var(--accent);flex-shrink:0;}
+.card h3{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;margin-bottom:10px;line-height:1.3;}
+.card ul{padding-left:0;list-style:none;}
+.card li{padding:5px 0;border-bottom:1px solid var(--rule);display:flex;align-items:baseline;gap:8px;font-size:13px;color:var(--muted);line-height:1.45;}
+.card li:last-child{border-bottom:none;}
+.card li::before{content:'→';color:var(--accent);flex-shrink:0;font-size:10px;}
+.card-dark{background:var(--ink);border-color:var(--ink);}
+.card-dark .card-hd{color:var(--gold);}
+.card-dark .card-hd::before{background:var(--gold);}
+.card-dark h3{color:var(--paper);}
+.card-dark li{color:rgba(245,241,235,.7);border-bottom-color:#222;}
+.card-accent{background:var(--accent);border-color:var(--accent);}
+.card-accent .card-hd,.card-accent h3,.card-accent li{color:#fff;}
+.card-accent .card-hd::before{background:rgba(255,255,255,.5);}
+.card-accent li{border-bottom-color:rgba(255,255,255,.2);}
+.card-accent li::before{color:rgba(255,255,255,.7);}
+.card-gold{background:rgba(201,168,76,.07);border-color:var(--gold);}
+.northstar-box{background:var(--ink);padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden;}
+.northstar-box::before{content:'★';font-size:120px;color:var(--gold);opacity:.06;position:absolute;top:-20px;right:20px;line-height:1;}
+.northstar-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:block;}
+.northstar-box h3{font-family:'Playfair Display',serif;font-size:clamp(16px,2.2vw,22px);font-weight:900;color:var(--paper);line-height:1.3;margin-bottom:8px;}
+.northstar-box p{font-size:13px;color:rgba(245,241,235,.65);line-height:1.6;}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-bottom:24px;}
+.kpi-box{background:var(--card);border:1px solid var(--rule);padding:16px 12px;text-align:center;}
+.kpi-box.dark{background:var(--ink);}
+.kpi-num{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--accent);line-height:1;display:block;margin-bottom:4px;}
+.kpi-box.dark .kpi-num{color:var(--gold);}
+.kpi-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);line-height:1.4;}
+.kpi-box.dark .kpi-label{color:rgba(245,241,235,.5);}
+.kpi-desc{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.4;}
+.roi-band{background:var(--surface);border:1px solid var(--rule);padding:22px;margin-bottom:24px;}
+.roi-band-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:block;}
+.gate-flow{display:flex;flex-direction:column;gap:0;margin-bottom:24px;}
+.gate-step{display:grid;grid-template-columns:40px 1fr;gap:0;border:1px solid var(--rule);border-bottom:none;background:var(--card);}
+.gate-step:last-child{border-bottom:1px solid var(--rule);}
+.gate-step.gate-exit{background:#fff8f6;border-color:#e8b4a8;}
+.gate-step.gate-new{background:rgba(201,168,76,.06);border-color:var(--gold);}
+.gate-num{background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;min-height:52px;}
+.gate-exit .gate-num{background:var(--accent);}
+.gate-new .gate-num{background:var(--gold);color:var(--ink);}
+.gate-body{padding:11px 16px;}
+.gate-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;display:block;}
+.gate-exit .gate-label{color:var(--accent);}
+.gate-new .gate-label{color:#7a5c10;}
+.gate-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.gate-desc-text{font-size:12px;color:var(--muted);line-height:1.5;}
+.gate-arrow{text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:#aaa;padding:2px 0;}
+.gate-outcomes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin:14px 0 24px;}
+.outcome-box{padding:14px 12px;text-align:center;}
+.outcome-box.no-agent{background:var(--green);}
+.outcome-box.rpa{background:var(--blue);}
+.outcome-box.agent{background:var(--accent);}
+.outcome-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:5px;display:block;}
+.outcome-label{font-size:13px;font-weight:600;color:#fff;line-height:1.3;}
+.outcome-when{font-size:11px;color:rgba(255,255,255,.65);margin-top:3px;line-height:1.4;}
+.checklist-wrap{background:var(--card);border:1px solid var(--rule);margin-bottom:18px;}
+.checklist-header{background:var(--ink);color:var(--paper);padding:8px 14px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;}
+.checklist-header.gold{background:var(--gold);color:var(--ink);}
+.checklist-header.accent{background:var(--accent);}
+.checklist{list-style:none;padding:0;margin:0;}
+.checklist li{padding:7px 12px;border-bottom:1px solid var(--rule);display:flex;align-items:baseline;gap:10px;font-size:12.5px;line-height:1.45;}
+.checklist li:last-child{border-bottom:none;}
+.checklist li::before{content:'☐';font-size:13px;color:var(--accent);flex-shrink:0;}
+.checklist li.new-item{background:rgba(201,168,76,.05);}
+.checklist li.new-item::before{content:'★';color:var(--gold);}
+.q-block{background:var(--surface);border-left:4px solid var(--gold);padding:11px 16px;margin-bottom:8px;}
+.q-block p{font-size:13px;color:var(--ink);font-weight:500;line-height:1.5;}
+.q-sub{font-size:12px;color:var(--muted)!important;font-weight:300!important;margin-top:3px;font-style:italic;}
+.sdiv{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:28px 0 12px;display:flex;align-items:center;gap:14px;}
+.sdiv::after{content:'';flex:1;height:1px;background:var(--rule);}
+.sdiv.new{color:var(--gold);}
+.sdiv.new::after{background:var(--gold);}
+.new-flag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);padding:2px 8px;border:1px solid var(--gold);margin-left:8px;}
+.tool-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.tool-pill{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;padding:4px 10px;border-radius:2px;font-weight:500;border:1px solid;}
+.tool-free{background:rgba(26,122,69,.08);border-color:var(--green);color:var(--green);}
+.tool-claude{background:rgba(201,168,76,.12);border-color:var(--gold);color:#7a5c10;}
+.tool-ibm{background:rgba(26,79,168,.08);border-color:var(--blue);color:var(--blue);}
+.tool-paid{background:rgba(92,26,138,.08);border-color:var(--purple);color:var(--purple);}
+.mtable{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px;}
+.mtable thead tr{background:var(--ink);color:var(--paper);}
+.mtable thead th{padding:9px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:500;}
+.mtable tbody tr{border-bottom:1px solid var(--rule);}
+.mtable tbody tr:hover{background:rgba(200,57,26,.03);}
+.mtable tbody tr.new-row{background:rgba(201,168,76,.05);}
+.mtable td{padding:9px 12px;vertical-align:top;line-height:1.5;}
+.mtable td:first-child{font-weight:600;font-size:12.5px;}
+.mtarget{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--accent);}
+.stack-compare{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:22px;}
+.stack-col{padding:20px 18px;}
+.stack-claude{background:#1a1a2e;}
+.stack-ibm{background:#0f1b3d;}
+.stack-col-header{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid;display:block;}
+.stack-claude .stack-col-header{color:var(--gold);border-color:var(--gold);}
+.stack-ibm .stack-col-header{color:#4da8ff;border-color:#4da8ff;}
+.stack-item{font-size:12.5px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:baseline;gap:10px;line-height:1.4;color:rgba(245,241,235,.7);}
+.stack-item:last-child{border-bottom:none;}
+.stack-item .ilabel{font-weight:600;color:rgba(245,241,235,.9);font-size:11px;min-width:88px;}
+.maturity-row{display:grid;grid-template-columns:106px 1fr;border:1px solid var(--rule);margin-bottom:5px;}
+.mat-label{padding:12px 14px;background:var(--ink);display:flex;flex-direction:column;justify-content:center;}
+.mat-level{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:2px;}
+.mat-name{font-size:12px;font-weight:600;color:var(--paper);}
+.mat-desc{padding:12px 16px;font-size:13px;color:var(--muted);line-height:1.5;}
+.compare-bar{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:18px;}
+.comp-side{padding:18px 16px;}
+.comp-avg{background:#e8e4dc;}
+.comp-elite{background:var(--ink);}
+.comp-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;display:block;}
+.comp-avg .comp-label{color:var(--muted);}
+.comp-elite .comp-label{color:var(--gold);}
+.comp-item{font-size:12.5px;padding:5px 0;border-bottom:1px solid;display:flex;align-items:baseline;gap:7px;line-height:1.4;}
+.comp-avg .comp-item{border-color:var(--rule);color:var(--muted);}
+.comp-elite .comp-item{border-color:#222;color:rgba(245,241,235,.8);}
+.comp-avg .comp-item::before{content:'✗';color:#bbb;font-size:10px;flex-shrink:0;}
+.comp-elite .comp-item::before{content:'✓';color:var(--gold);font-size:10px;flex-shrink:0;}
+.pullquote{margin:32px 0;padding:26px 32px;background:var(--ink);position:relative;overflow:hidden;}
+.pullquote::before{content:'\201C';font-family:'Playfair Display',serif;font-size:130px;color:var(--accent);opacity:.1;position:absolute;top:-24px;left:12px;line-height:1;}
+.pullquote p{font-family:'Playfair Display',serif;font-size:clamp(15px,2vw,20px);font-style:italic;line-height:1.5;position:relative;z-index:1;color:var(--paper);margin-bottom:10px;}
+.pullquote-attr{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;}
+.full-callout{background:linear-gradient(135deg,var(--accent),#8a1a08);color:#fff;padding:32px 28px;margin:28px 0;text-align:center;}
+.full-callout h3{font-family:'Playfair Display',serif;font-size:clamp(18px,2.8vw,26px);font-weight:900;margin-bottom:8px;}
+.full-callout p{font-size:13px;opacity:.85;max-width:500px;margin:0 auto;line-height:1.65;}
+.insight-box{background:rgba(201,168,76,.08);border:1px solid var(--gold);padding:16px 20px;margin-bottom:18px;}
+.insight-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#7a5c10;margin-bottom:6px;display:block;}
+.insight-box p{font-size:13px;color:var(--ink);line-height:1.6;}
+.footer{background:var(--ink);padding:22px 40px;border-top:3px solid var(--accent);}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-brand{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);}
+.footer-links{display:flex;gap:14px;}
+.footer-link{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#bbb;text-decoration:none;border-bottom:1px solid #444;padding-bottom:1px;transition:color .2s;}
+.footer-link:hover{color:var(--gold);border-bottom-color:var(--gold);}
+.footer-copy{font-family:'DM Mono',monospace;font-size:10px;color:#888;margin-top:5px;line-height:1.6;}
+@media(max-width:768px){.masthead{padding:10px 16px;}.masthead-nav{display:none;}.hero,.content-wrap{padding-left:16px;padding-right:16px;}.pipeline-inner{padding:0 16px;}.two-col,.three-col,.four-col{grid-template-columns:1fr;}.pipeline-track{grid-template-columns:repeat(2,1fr);}.compare-bar,.stack-compare{grid-template-columns:1fr;}.about-inner{grid-template-columns:1fr;gap:28px;}.kpi-grid{grid-template-columns:1fr 1fr;}.gate-outcomes{grid-template-columns:1fr;}.sp-name{display:none;}}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-brand">Agentic AI Product Framework</div>
+  <div class="masthead-nav">
+    <button class="nav-btn active" onclick="showStage('overview')">Overview</button>
+    <button class="nav-btn" onclick="showStage('s1')">1 · Triage</button>
+    <button class="nav-btn" onclick="showStage('s2')">2 · Architecture</button>
+    <button class="nav-btn" onclick="showStage('s3')">3 · Prototype</button>
+    <button class="nav-btn" onclick="showStage('s4')">4 · Evaluation</button>
+    <button class="nav-btn" onclick="showStage('s5')">5 · Production</button>
+    <button class="nav-btn" onclick="showStage('s6')">6 · Observability</button>
+    <button class="nav-btn" onclick="showStage('s7')">7 · Self-Improvement</button>
+  </div>
+</div>
+
+<!-- ═══ OVERVIEW ═══ -->
+<div id="page-overview" class="stage-page visible">
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-tag">Author: Puru Nayak, May 2026</div>
+      <h1>Agentic AI<br><em>Product Framework.</em></h1>
+      <p class="hero-sub">A stage-by-stage reference for product leaders building autonomous AI systems — from deciding whether to build an agent at all, through architecture, evaluation, production, and self-improvement. Specifically engineered for agentic systems, not general AI products.</p>
+      <div class="hero-meta">
+        <div><span class="hero-stat-num">7</span><span class="hero-stat-label">Stages end-to-end</span></div>
+        <div><span class="hero-stat-num">37+</span><span class="hero-stat-label">Questions to evaluate</span></div>
+        <div><span class="hero-stat-num">42+</span><span class="hero-stat-label">Checklist items</span></div>
+        <div><span class="hero-stat-num">80+</span><span class="hero-stat-label">Tools mapped</span></div>
+        <div><span class="hero-stat-num">32+</span><span class="hero-stat-label">KPIs with targets</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="about-band">
+    <div class="about-inner">
+      <div class="about-left">
+        <p>Built from practical experience managing real AI products and platforms at scale — designing multi-agent systems, guiding product teams through AI adoption, and operationalizing AI in complex enterprise environments globally.</p>
+        <p>This framework is specifically for agentic systems — multi-step, autonomous, tool-using AI. For general 0→1 AI product strategy (problem framing, market sizing, discovery, GTM), use the companion 0→1 AI Product Playbook. Start there; come here when Stage 6 (Concierge MVP) confirms you need an agent.</p>
+      </div>
+      <div class="about-right">
+        <div class="usage-item"><span class="usage-label">Who it's for</span><div class="usage-text">Product managers and technical leaders building or evaluating agentic AI systems — specifically multi-step, autonomous, tool-using workflows.</div></div>
+        <div class="usage-item"><span class="usage-label">When to use it</span><div class="usage-text">After you've validated the problem and confirmed the task requires multi-step reasoning, tool calls, and autonomous decisions — not before.</div></div>
+        <div class="usage-item"><span class="usage-label">Stack coverage</span><div class="usage-text">Tools mapped across open/free, Claude/Anthropic, and IBM enterprise stacks at every stage.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="pipeline-bar">
+    <div class="pipeline-inner">
+      <div class="pipeline-label">Select a stage to explore</div>
+      <div class="pipeline-track">
+        <div class="pipe-step" onclick="showStage('s1')"><span class="pipe-step-num">01</span><div class="pipe-step-name">Triage & Decision Gate</div></div>
+        <div class="pipe-step" onclick="showStage('s2')"><span class="pipe-step-num">02</span><div class="pipe-step-name">Architecture Design</div></div>
+        <div class="pipe-step" onclick="showStage('s3')"><span class="pipe-step-num">03</span><div class="pipe-step-name">Build & Prototype</div></div>
+        <div class="pipe-step" onclick="showStage('s4')"><span class="pipe-step-num">04</span><div class="pipe-step-name">Evaluation & Evals</div></div>
+        <div class="pipe-step" onclick="showStage('s5')"><span class="pipe-step-num">05</span><div class="pipe-step-name">Production & Scale</div></div>
+        <div class="pipe-step" onclick="showStage('s6')"><span class="pipe-step-num">06</span><div class="pipe-step-name">Observability & Cost</div></div>
+        <div class="pipe-step" onclick="showStage('s7')"><span class="pipe-step-num">07</span><div class="pipe-step-name">Self-Improvement</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="content-wrap">
+    <div class="sdiv">Agenticity Spectrum</div>
+    <svg width="100%" viewBox="0 0 1060 220" role="img" style="margin-bottom:24px;display:block;">
+      <title>Agenticity Spectrum — 5 levels from Reactive to Autonomous</title>
+      <defs>
+        <marker id="arr-ov" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+        <linearGradient id="sg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#1a4fa8" stop-opacity=".15"/><stop offset="100%" stop-color="#c8391a" stop-opacity=".2"/></linearGradient>
+      </defs>
+      <rect x="20" y="110" width="940" height="5" rx="2.5" fill="url(#sg)"/>
+      <line x1="20" y1="112" x2="955" y2="112" stroke="#c9a84c" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr-ov)"/>
+      <circle cx="80" cy="112" r="19" fill="#1a4fa8" fill-opacity=".12" stroke="#1a4fa8" stroke-width="1.5"/>
+      <text x="80" y="116" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#1a4fa8">L1</text>
+      <text x="80" y="145" text-anchor="middle" font-family="Playfair Display,serif" font-size="13" font-weight="700" fill="#0a0a0a">Reactive</text>
+      <text x="80" y="160" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#6b6560">User asks → LLM responds</text>
+      <text x="80" y="174" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#1a4fa8" letter-spacing="1">CHATBOT</text>
+      <circle cx="270" cy="112" r="21" fill="#1a7a45" fill-opacity=".12" stroke="#1a7a45" stroke-width="1.5"/>
+      <text x="270" y="116" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#1a7a45">L2</text>
+      <text x="270" y="145" text-anchor="middle" font-family="Playfair Display,serif" font-size="13" font-weight="700" fill="#0a0a0a">Augmented</text>
+      <text x="270" y="160" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#6b6560">RAG + basic tool calling</text>
+      <text x="270" y="174" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#1a7a45" letter-spacing="1">RETRIEVAL</text>
+      <circle cx="480" cy="112" r="23" fill="#c9a84c" fill-opacity=".15" stroke="#c9a84c" stroke-width="1.5"/>
+      <text x="480" y="116" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#8a6010">L3</text>
+      <text x="480" y="145" text-anchor="middle" font-family="Playfair Display,serif" font-size="13" font-weight="700" fill="#0a0a0a">Orchestrated</text>
+      <text x="480" y="160" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#6b6560">Multi-step · semi-autonomous</text>
+      <text x="480" y="174" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#8a6010" letter-spacing="1">PLANNER</text>
+      <circle cx="690" cy="112" r="25" fill="#5c1a8a" fill-opacity=".12" stroke="#5c1a8a" stroke-width="1.5"/>
+      <text x="690" y="116" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#5c1a8a">L4</text>
+      <text x="690" y="145" text-anchor="middle" font-family="Playfair Display,serif" font-size="13" font-weight="700" fill="#0a0a0a">Adaptive</text>
+      <text x="690" y="160" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#6b6560">Self-monitoring · retries</text>
+      <text x="690" y="174" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#5c1a8a" letter-spacing="1">SELF-CORRECTING</text>
+      <circle cx="900" cy="112" r="27" fill="#c8391a" fill-opacity=".12" stroke="#c8391a" stroke-width="2"/>
+      <text x="900" y="116" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#c8391a">L5</text>
+      <text x="900" y="145" text-anchor="middle" font-family="Playfair Display,serif" font-size="13" font-weight="700" fill="#0a0a0a">Autonomous</text>
+      <text x="900" y="160" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#6b6560">Multi-agent · self-improving</text>
+      <text x="900" y="174" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#c8391a" letter-spacing="1">FRONTIER</text>
+      <text x="490" y="52" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#6b6560" letter-spacing="3">INCREASING AUTONOMY · CAPABILITY · RISK</text>
+      <text x="1045" y="210" text-anchor="end" font-family="DM Mono,monospace" font-size="9" fill="#aaa" letter-spacing="1">Puru Nayak · 2026</text>
+    </svg>
+    <div class="sdiv">Feature-First vs. Systems-First</div>
+    <div class="compare-bar">
+      <div class="comp-side comp-avg"><span class="comp-label">Feature-First · Common</span>
+        <div class="comp-item">Ships when demo looks good</div>
+        <div class="comp-item">No eval infra before launch</div>
+        <div class="comp-item">Token cost at account level</div>
+        <div class="comp-item">Prompt changes without regression</div>
+        <div class="comp-item">Failure handling reactive</div>
+        <div class="comp-item">Self-improvement not planned</div>
+      </div>
+      <div class="comp-side comp-elite"><span class="comp-label">Systems-First · This Framework</span>
+        <div class="comp-item">Ships when eval thresholds pass</div>
+        <div class="comp-item">Eval infra built before first user</div>
+        <div class="comp-item">Cost tracked per successful outcome</div>
+        <div class="comp-item">Every prompt change runs regression</div>
+        <div class="comp-item">Failure modes designed upfront</div>
+        <div class="comp-item">Self-improvement loop from day one</div>
+      </div>
+    </div>
+    <div class="sdiv">Stage Map</div>
+    <div class="three-col">
+      <div class="card"><div class="card-hd">Stages 1–2 · Foundation</div><h3>Before You Build</h3><ul><li>Triage: agent vs RPA vs function vs nothing</li><li>Concierge MVP test before committing</li><li>ROI analysis and success definition</li><li>Design the full cognitive architecture</li><li>Bake in governance at design time</li></ul></div>
+      <div class="card card-dark"><div class="card-hd">Stages 3–5 · Execution</div><h3>While You Build</h3><ul><li>Prompt versioning and eval gates from day one</li><li>Evaluate before shipping</li><li>Harden for security, reliability, rollback</li><li>Track cost per outcome, not per call</li></ul></div>
+      <div class="card card-accent"><div class="card-hd">Stages 6–7 · Compounding</div><h3>After You Ship</h3><ul><li>Trace-level observability on every step</li><li>Token economics continuously optimized</li><li>Failures become test cases automatically</li><li>Data flywheel compounds capability</li></ul></div>
+    </div>
+  </div>
+  <div class="footer"><div class="footer-inner"><div><div class="footer-brand">Agentic AI Product Framework</div><div class="footer-copy">Built by Puru Nayak · Global Product & GTM Leader · May 2026 · Please reference and tag the original author if you share or adapt this.</div></div><div class="footer-links"><a class="footer-link" href="https://github.com/puru-nayak-labs" target="_blank">GitHub</a><a class="footer-link" href="https://www.linkedin.com/in/purnendunayak/" target="_blank">LinkedIn</a></div></div></div>
+</div>
+
+<!-- ═══ STAGE 1 ═══ -->
+<div id="page-s1" class="stage-page">
+  <div class="pipeline-bar"><div class="pipeline-inner"><div class="pipeline-label">Navigate stages</div><div class="pipeline-track">
+    <div class="pipe-step active-step" onclick="showStage('s1')"><span class="pipe-step-num">01</span><div class="pipe-step-name">Triage & Decision Gate</div></div>
+    <div class="pipe-step" onclick="showStage('s2')"><span class="pipe-step-num">02</span><div class="pipe-step-name">Architecture Design</div></div>
+    <div class="pipe-step" onclick="showStage('s3')"><span class="pipe-step-num">03</span><div class="pipe-step-name">Build & Prototype</div></div>
+    <div class="pipe-step" onclick="showStage('s4')"><span class="pipe-step-num">04</span><div class="pipe-step-name">Evaluation & Evals</div></div>
+    <div class="pipe-step" onclick="showStage('s5')"><span class="pipe-step-num">05</span><div class="pipe-step-name">Production & Scale</div></div>
+    <div class="pipe-step" onclick="showStage('s6')"><span class="pipe-step-num">06</span><div class="pipe-step-name">Observability & Cost</div></div>
+    <div class="pipe-step" onclick="showStage('s7')"><span class="pipe-step-num">07</span><div class="pipe-step-name">Self-Improvement</div></div>
+  </div></div></div>
+  <div class="content-wrap">
+    <div class="stage-hero">
+      <div class="stage-eyebrow">Stage 01 · Triage & Decision Gate</div>
+      <h2>What Should You<br><em>Actually Build?</em></h2>
+      <p class="stage-hero-desc">Run every proposed AI initiative through this sequential gate before committing engineering resources. Stop at the first exit condition that applies. Includes ROI analysis, load-bearing AI test, and Concierge MVP validation — the North Star for everything that follows.</p>
+      <div class="stage-meta"><span class="stage-badge">PM-Led · Week 1–2</span><span class="stage-badge accent">7 Questions</span></div>
+    </div>
+    <!-- Progress bar -->
+    <div class="stage-progress">
+      <div class="sp-label">7-stage linear progression</div>
+      <div class="sp-track">
+        <div class="sp-step active-sp"><div class="sp-dot">01</div><div class="sp-name">Triage</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">02</div><div class="sp-name">Architecture</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">03</div><div class="sp-name">Build</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">04</div><div class="sp-name">Evaluation</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">05</div><div class="sp-name">Production</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">06</div><div class="sp-name">Observability</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">07</div><div class="sp-name">Self-Improve</div></div>
+      </div>
+      <div class="sp-output"><strong>Stage output</strong>Go / No-Go decision · Build type confirmed · North Star metric defined</div>
+    </div>
+
+    <div class="sdiv">North Star & ROI Framework</div>
+    <div class="northstar-box">
+      <span class="northstar-label">★ North Star Definition</span>
+      <h3>What does success look like — measurably — in 6 months?</h3>
+      <p>Before any gate, define the single metric that will tell you the agent is working. Every downstream decision flows from this. If you cannot write it in one sentence, pause here.</p>
+    </div>
+    <div class="two-col">
+      <div class="roi-band">
+        <span class="roi-band-label">ROI Inputs — Capture Before Building</span>
+        <table class="mtable" style="margin-bottom:0;">
+          <thead><tr><th>Input</th><th>How to Measure</th></tr></thead>
+          <tbody>
+            <tr><td>Human time per task</td><td>Time study or task tracking data</td></tr>
+            <tr><td>Tasks per day / week</td><td>Ticket system, process logs</td></tr>
+            <tr><td>Fully-loaded human cost</td><td>Salary + overhead per hour × time</td></tr>
+            <tr><td>Current human error rate</td><td>QA records, rework logs</td></tr>
+            <tr><td>Cost of one agent error</td><td>Define with legal, finance, ops</td></tr>
+            <tr><td>Estimated agent cost/task</td><td>Tokens × model price + infra</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card card-dark">
+        <div class="card-hd">ROI Decision Rule</div>
+        <h3>Go / No-Go Thresholds</h3>
+        <ul>
+          <li>Agent cost &lt;40% of human cost → strong go</li>
+          <li>Agent cost 40–80% of human cost → go if quality gain justifies</li>
+          <li>Agent cost &gt;80% of human cost → rethink scope</li>
+          <li>Volume &lt;50 tasks/week → ROI rarely justifies</li>
+          <li>Error cost exceeds monthly savings → redesign oversight first</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- NEW: Load-bearing AI test -->
+    <div class="sdiv new">Load-Bearing AI Test <span class="new-flag">from 0→1 playbook</span></div>
+    <div class="insight-box">
+      <span class="insight-label">★ Critical gate before committing to agent architecture</span>
+      <p>Ask one question: <strong>Does the agent's removal make the core outcome impossible — or just slower?</strong> If impossible → load-bearing AI, build the agent. If slower → simpler LLM feature embedded in existing product. Only agentic systems justify the architecture, governance, and maintenance cost of a full multi-step agent build.</p>
+    </div>
+
+    <div class="sdiv">Sequential Decision Gate — Run Top to Bottom, Stop at First Exit</div>
+    <div class="gate-flow">
+      <div class="gate-step"><div class="gate-num">G1</div><div class="gate-body"><span class="gate-label">Problem Check</span><div class="gate-title">Is there a real, repeated human problem with enough volume?</div><div class="gate-desc-text">Fewer than ~50 tasks/week → stop. ROI won't justify build and maintenance.</div></div></div>
+      <div class="gate-arrow">↓</div>
+      <div class="gate-step gate-exit"><div class="gate-num">EXIT</div><div class="gate-body"><span class="gate-label">Exit → Do Nothing / Better UI</span><div class="gate-title">No volume → build a better process first</div></div></div>
+      <div class="gate-arrow">↓ Passed G1</div>
+      <div class="gate-step"><div class="gate-num">G2</div><div class="gate-body"><span class="gate-label">Determinism Check</span><div class="gate-title">Can this be solved with a rule, script, or scheduled job?</div><div class="gate-desc-text">Same input always produces same correct output? Not an AI problem.</div></div></div>
+      <div class="gate-arrow">↓</div>
+      <div class="gate-step gate-exit"><div class="gate-num">EXIT</div><div class="gate-body"><span class="gate-label">Exit → Function / Script / Cron</span><div class="gate-title">Deterministic logic → code it, don't model it</div></div></div>
+      <div class="gate-arrow">↓ Passed G2</div>
+      <div class="gate-step"><div class="gate-num">G3</div><div class="gate-body"><span class="gate-label">Automation Check</span><div class="gate-title">Structured, UI-driven, repetitive with no judgment required?</div></div></div>
+      <div class="gate-arrow">↓</div>
+      <div class="gate-step gate-exit"><div class="gate-num">EXIT</div><div class="gate-body"><span class="gate-label">Exit → RPA</span><div class="gate-title">Repetitive UI tasks → UiPath, Automation Anywhere, Power Automate</div></div></div>
+      <div class="gate-arrow">↓ Passed G3</div>
+      <div class="gate-step"><div class="gate-num">G4</div><div class="gate-body"><span class="gate-label">AI Necessity + Load-Bearing Test</span><div class="gate-title">Is this a single AI call — AND does removing AI make the outcome impossible (not just slower)?</div><div class="gate-desc-text">Single AI call: embed LLM in existing product. Multi-step AND load-bearing → genuine agentic use case.</div></div></div>
+      <div class="gate-arrow">↓</div>
+      <div class="gate-step gate-exit"><div class="gate-num">EXIT</div><div class="gate-body"><span class="gate-label">Exit → Simple LLM Feature</span><div class="gate-title">Single-step AI → embed LLM call in existing product</div></div></div>
+      <div class="gate-arrow">↓ Passed G4</div>
+      <div class="gate-step"><div class="gate-num">G5</div><div class="gate-body"><span class="gate-label">Multi-Step Check</span><div class="gate-title">Does the task require multiple steps, tool calls, or sequential decisions?</div></div></div>
+      <div class="gate-arrow">↓</div>
+      <div class="gate-step"><div class="gate-num">G6</div><div class="gate-body"><span class="gate-label">Error Cost Check</span><div class="gate-title">What is the cost of an agent error — acceptable at automation scale?</div></div></div>
+      <div class="gate-arrow">↓</div>
+      <div class="gate-step"><div class="gate-num">G7</div><div class="gate-body"><span class="gate-label">Data Readiness Check</span><div class="gate-title">Is the data the agent needs accessible, structured, and current?</div></div></div>
+      <div class="gate-arrow">↓</div>
+      <div class="gate-step"><div class="gate-num">G8</div><div class="gate-body"><span class="gate-label">Success Definition Check</span><div class="gate-title">Can task completion be evaluated with a clear pass/fail?</div></div></div>
+      <div class="gate-arrow">↓</div>
+      <!-- NEW: G9 Concierge MVP Gate -->
+      <div class="gate-step gate-new"><div class="gate-num">G9</div><div class="gate-body"><span class="gate-label">★ New · Concierge MVP Gate</span><div class="gate-title">Have you delivered this outcome manually to 5+ users and confirmed they act on it?</div><div class="gate-desc-text">Simulate the agent with a human-in-the-loop before writing a single line of agent code. If users don't act on a manually delivered outcome, the automated version won't fix that. This is the highest-value derisking step before committing to agent architecture.</div></div></div>
+    </div>
+
+    <div class="sdiv">Decision Outcomes</div>
+    <div class="gate-outcomes">
+      <div class="outcome-box no-agent"><span class="outcome-title">No AI Needed</span><div class="outcome-label">Function / Script / RPA</div><div class="outcome-when">Deterministic or UI-repetitive</div></div>
+      <div class="outcome-box rpa"><span class="outcome-title">Simple LLM Feature</span><div class="outcome-label">Single-step AI call</div><div class="outcome-when">Embed in existing product</div></div>
+      <div class="outcome-box agent"><span class="outcome-title">Build an Agent</span><div class="outcome-label">Multi-step · Load-bearing · Validated</div><div class="outcome-when">Passed all 9 gates → Stage 2</div></div>
+    </div>
+
+    <div class="sdiv">Pre-Build Checklist</div>
+    <div class="checklist-wrap">
+      <div class="checklist-header gold">Complete before proceeding to Stage 2</div>
+      <ul class="checklist">
+        <li>North Star metric written in one sentence — agreed by all stakeholders</li>
+        <li>ROI inputs captured: human time, volume, cost per task, error rate, error cost</li>
+        <li>Load-bearing AI test passed: agent removal makes outcome impossible, not just slower</li>
+        <li>ROI go/no-go threshold evaluated and documented</li>
+        <li>Workflow mapped step-by-step including every decision fork</li>
+        <li>Data sources identified, access confirmed, format assessed</li>
+        <li>Success criterion written — specific, measurable, evaluatable</li>
+        <li>Human override path designed</li>
+        <li>Compliance and regulatory constraints identified</li>
+        <li>Owner of outcome when agent is wrong: named</li>
+        <li class="new-item">Concierge MVP completed: outcome delivered manually to 5+ users who acted on it</li>
+      </ul>
+    </div>
+
+    <div class="sdiv">Key Questions to Ask Stakeholders</div>
+    <div class="q-block"><p>Walk me through the last 5 times this task was done. Where did it take longest? Where did something go wrong?</p><p class="q-sub">Real failure modes surface here that requirements docs never capture.</p></div>
+    <div class="q-block"><p>If the agent gets it wrong 1 in 20 times — what happens downstream, who finds out, and how fast?</p><p class="q-sub">Forces explicit error cost definition before anyone writes code.</p></div>
+    <div class="q-block"><p>What does the data look like right now — queryable, or in emails, PDFs, and spreadsheets?</p><p class="q-sub">Data access is the most common silent blocker at this stage.</p></div>
+    <div class="q-block"><p>In 6 months, what single number tells us the agent is working? What do we watch weekly to know we're on track?</p><p class="q-sub">Separates vanity metrics from actionable leading indicators.</p></div>
+    <div class="q-block"><p>Who owns the outcome when the agent is wrong — are they in this room right now?</p><p class="q-sub">Accountability gap here becomes a production crisis later.</p></div>
+    <div class="q-block"><p>If we delivered this outcome manually to 10 users this week — would they act on it? Have we tested that?</p><p class="q-sub">The Concierge MVP question. If the answer is no or untested, don't build the agent yet.</p></div>
+    <div class="q-block"><p>Does the product fail without AI — or is AI making an existing process faster?</p><p class="q-sub">The load-bearing test. Only build agents for the former.</p></div>
+  </div>
+  <div class="footer"><div class="footer-inner"><div><div class="footer-brand">Agentic AI Product Framework</div><div class="footer-copy">Built by Puru Nayak · Global Product & GTM Leader · May 2026 · Please reference and tag the original author if you share or adapt this.</div></div><div class="footer-links"><a class="footer-link" href="https://github.com/puru-nayak-labs" target="_blank">GitHub</a><a class="footer-link" href="https://www.linkedin.com/in/purnendunayak/" target="_blank">LinkedIn</a></div></div></div>
+</div>
+
+<!-- ═══ STAGE 2 ═══ -->
+<div id="page-s2" class="stage-page">
+  <div class="pipeline-bar"><div class="pipeline-inner"><div class="pipeline-label">Navigate stages</div><div class="pipeline-track">
+    <div class="pipe-step" onclick="showStage('s1')"><span class="pipe-step-num">01</span><div class="pipe-step-name">Triage & Decision Gate</div></div>
+    <div class="pipe-step active-step" onclick="showStage('s2')"><span class="pipe-step-num">02</span><div class="pipe-step-name">Architecture Design</div></div>
+    <div class="pipe-step" onclick="showStage('s3')"><span class="pipe-step-num">03</span><div class="pipe-step-name">Build & Prototype</div></div>
+    <div class="pipe-step" onclick="showStage('s4')"><span class="pipe-step-num">04</span><div class="pipe-step-name">Evaluation & Evals</div></div>
+    <div class="pipe-step" onclick="showStage('s5')"><span class="pipe-step-num">05</span><div class="pipe-step-name">Production & Scale</div></div>
+    <div class="pipe-step" onclick="showStage('s6')"><span class="pipe-step-num">06</span><div class="pipe-step-name">Observability & Cost</div></div>
+    <div class="pipe-step" onclick="showStage('s7')"><span class="pipe-step-num">07</span><div class="pipe-step-name">Self-Improvement</div></div>
+  </div></div></div>
+  <div class="content-wrap">
+    <div class="stage-hero">
+      <div class="stage-eyebrow">Stage 02 · Architecture Design</div>
+      <h2>Designing the<br><em>Cognitive Stack</em></h2>
+      <p class="stage-hero-desc">Architecture decisions made here determine system reliability, cost, and governance for the product's lifetime. Six dimensions must be explicitly decided — not defaulted into.</p>
+      <div class="stage-meta"><span class="stage-badge">PM + Engineering · Weeks 2–5</span><span class="stage-badge accent">3 Questions</span></div>
+    </div>
+    <div class="stage-progress">
+      <div class="sp-label">7-stage linear progression</div>
+      <div class="sp-track">
+        <div class="sp-step done" onclick="showStage('s1')"><div class="sp-dot">✓</div><div class="sp-name">Triage</div></div>
+        <div class="sp-step active-sp"><div class="sp-dot">02</div><div class="sp-name">Architecture</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">03</div><div class="sp-name">Build</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">04</div><div class="sp-name">Evaluation</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">05</div><div class="sp-name">Production</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">06</div><div class="sp-name">Observability</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">07</div><div class="sp-name">Self-Improve</div></div>
+      </div>
+      <div class="sp-output"><strong>Stage output</strong>6 architectural dimensions locked · cost/latency targets confirmed · governance framework in place</div>
+    </div>
+    <div class="northstar-box">
+      <span class="northstar-label">★ Architecture KPIs to Lock Now</span>
+      <h3>Every architectural choice maps to a cost, latency, or quality tradeoff</h3>
+      <p>Confirm: target latency per task, max acceptable cost per task, minimum goal completion rate, and which failure modes are catastrophic vs acceptable.</p>
+    </div>
+    <div class="sdiv">6 Architectural Dimensions</div>
+    <div class="three-col">
+      <div class="card"><div class="card-hd">Dimension A</div><h3>Reasoning & Planning</h3><ul><li>Chain-of-thought vs ReAct vs Tree-of-Thought</li><li>Multi-step goal decomposition</li><li>Planning depth vs latency tradeoff</li><li>Reflection and self-critique loop</li><li>Hierarchical agent patterns</li></ul></div>
+      <div class="card"><div class="card-hd">Dimension B</div><h3>Memory Architecture</h3><ul><li>In-context memory scope</li><li>External long-term: vector DB selection</li><li>Episodic vs semantic vs procedural</li><li>Memory retention policy</li><li>Multi-session continuity strategy</li></ul></div>
+      <div class="card"><div class="card-hd">Dimension C</div><h3>Tool Use & Actions</h3><ul><li>Tool taxonomy: read / write / execute by risk</li><li>Permission boundaries per tool class</li><li>Human approval checkpoints</li><li>Action verification and rollback paths</li><li>Parallel vs sequential orchestration</li></ul></div>
+      <div class="card"><div class="card-hd">Dimension D</div><h3>Orchestration Pattern</h3><ul><li>Single agent vs multi-agent</li><li>Orchestrator + sub-agent pattern</li><li>Human-in-the-loop placement</li><li>Failure propagation isolation</li><li>Inter-agent communication protocol</li></ul></div>
+      <div class="card"><div class="card-hd">Dimension E</div><h3>Context Strategy</h3><ul><li>Prompt compression and summarization</li><li>Prompt caching (major cost lever)</li><li>Token budget per sub-task</li><li>Context overflow handling</li><li>System prompt vs dynamic injection</li></ul></div>
+      <div class="card card-dark"><div class="card-hd">Dimension F</div><h3>Governance by Design</h3><ul><li>PII detection at input AND output</li><li>Prompt injection defense</li><li>RBAC for agent action classes</li><li>Full audit trail for every action</li><li>Kill switch and graceful degradation</li></ul></div>
+    </div>
+    <div class="sdiv">Key Questions</div>
+    <div class="q-block"><p>Which model tier handles which sub-task — routing or defaulting frontier model everywhere?</p><p class="q-sub">Routing is the highest-ROI architecture decision.</p></div>
+    <div class="q-block"><p>Where are the human approval gates — fast enough not to negate the value of automation?</p><p class="q-sub">A 4-hour human gate breaks an async agent.</p></div>
+    <div class="q-block"><p>How does the system degrade when a tool call fails or context is insufficient?</p><p class="q-sub">Failure paths need as much design as success paths.</p></div>
+    <div class="sdiv">Tools by Stack</div>
+    <div class="stack-compare">
+      <div class="stack-col stack-claude"><span class="stack-col-header">Claude / Open Stack</span>
+        <div class="stack-item"><span class="ilabel">Orchestration</span>LangGraph, CrewAI, AutoGen, OpenAI Agents SDK</div>
+        <div class="stack-item"><span class="ilabel">Memory</span>Pinecone, Chroma, Weaviate, Milvus</div>
+        <div class="stack-item"><span class="ilabel">Tools</span>Claude Code, Playwright, Browserbase, n8n</div>
+        <div class="stack-item"><span class="ilabel">Governance</span>Guardrails AI, NeMo Guardrails, Lakera</div>
+      </div>
+      <div class="stack-col stack-ibm"><span class="stack-col-header">IBM Enterprise Stack</span>
+        <div class="stack-item"><span class="ilabel">Orchestration</span>IBM BeeAI, watsonx.ai Flows</div>
+        <div class="stack-item"><span class="ilabel">Memory</span>IBM Knowledge Catalog, watsonx.data</div>
+        <div class="stack-item"><span class="ilabel">Reasoning</span>watsonx.ai: Granite, Llama, Mistral</div>
+        <div class="stack-item"><span class="ilabel">Governance</span>watsonx.governance</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><div class="footer-inner"><div><div class="footer-brand">Agentic AI Product Framework</div><div class="footer-copy">Built by Puru Nayak · Global Product & GTM Leader · May 2026 · Please reference and tag the original author if you share or adapt this.</div></div><div class="footer-links"><a class="footer-link" href="https://github.com/puru-nayak-labs" target="_blank">GitHub</a><a class="footer-link" href="https://www.linkedin.com/in/purnendunayak/" target="_blank">LinkedIn</a></div></div></div>
+</div>
+
+<!-- ═══ STAGE 3 ═══ -->
+<div id="page-s3" class="stage-page">
+  <div class="pipeline-bar"><div class="pipeline-inner"><div class="pipeline-label">Navigate stages</div><div class="pipeline-track">
+    <div class="pipe-step" onclick="showStage('s1')"><span class="pipe-step-num">01</span><div class="pipe-step-name">Triage & Decision Gate</div></div>
+    <div class="pipe-step" onclick="showStage('s2')"><span class="pipe-step-num">02</span><div class="pipe-step-name">Architecture Design</div></div>
+    <div class="pipe-step active-step" onclick="showStage('s3')"><span class="pipe-step-num">03</span><div class="pipe-step-name">Build & Prototype</div></div>
+    <div class="pipe-step" onclick="showStage('s4')"><span class="pipe-step-num">04</span><div class="pipe-step-name">Evaluation & Evals</div></div>
+    <div class="pipe-step" onclick="showStage('s5')"><span class="pipe-step-num">05</span><div class="pipe-step-name">Production & Scale</div></div>
+    <div class="pipe-step" onclick="showStage('s6')"><span class="pipe-step-num">06</span><div class="pipe-step-name">Observability & Cost</div></div>
+    <div class="pipe-step" onclick="showStage('s7')"><span class="pipe-step-num">07</span><div class="pipe-step-name">Self-Improvement</div></div>
+  </div></div></div>
+  <div class="content-wrap">
+    <div class="stage-hero">
+      <div class="stage-eyebrow">Stage 03 · Build & Prototype</div>
+      <h2>Prompts, Loops, Memory —<br><em>Iterated Fast.</em></h2>
+      <p class="stage-hero-desc">Prototyping an agent means designing reasoning chains, not UI flows. Prompt versioning and failure detection must be in place before iteration begins.</p>
+      <div class="stage-meta"><span class="stage-badge">Engineering-Led · Weeks 3–8</span><span class="stage-badge accent">4 Questions</span></div>
+    </div>
+    <div class="stage-progress">
+      <div class="sp-label">7-stage linear progression</div>
+      <div class="sp-track">
+        <div class="sp-step done" onclick="showStage('s1')"><div class="sp-dot">✓</div><div class="sp-name">Triage</div></div>
+        <div class="sp-step done" onclick="showStage('s2')"><div class="sp-dot">✓</div><div class="sp-name">Architecture</div></div>
+        <div class="sp-step active-sp"><div class="sp-dot">03</div><div class="sp-name">Build</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">04</div><div class="sp-name">Evaluation</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">05</div><div class="sp-name">Production</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">06</div><div class="sp-name">Observability</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">07</div><div class="sp-name">Self-Improve</div></div>
+      </div>
+      <div class="sp-output"><strong>Stage output</strong>Working prototype · eval baseline established · silent failure modes mapped</div>
+    </div>
+    <div class="sdiv">Prototype KPIs</div>
+    <div class="kpi-grid">
+      <div class="kpi-box"><span class="kpi-num">—</span><div class="kpi-label">Task Completion Rate</div><div class="kpi-desc">% test cases passing without human help.</div></div>
+      <div class="kpi-box"><span class="kpi-num">—</span><div class="kpi-label">Tool Call Precision</div><div class="kpi-desc">% selecting right tool with correct params.</div></div>
+      <div class="kpi-box"><span class="kpi-num">—</span><div class="kpi-label">Avg Reasoning Steps</div><div class="kpi-desc">High count signals planning inefficiency.</div></div>
+      <div class="kpi-box"><span class="kpi-num">—</span><div class="kpi-label">Silent Failure Rate</div><div class="kpi-desc">% failed tasks with no error surfaced. Must be 0.</div></div>
+    </div>
+    <div class="sdiv">Prototype Build Checklist</div>
+    <div class="checklist-wrap">
+      <div class="checklist-header accent">Must be in place before declaring prototype complete</div>
+      <ul class="checklist">
+        <li>System prompt: role / context / constraints / output format / tool descriptions</li>
+        <li>Prompt versioning active — every change tracked with version ID</li>
+        <li>Agent loop: Observe → Plan → Act → Reflect</li>
+        <li>Max iteration cap set — no infinite loops possible</li>
+        <li>Confidence threshold for irreversible actions defined</li>
+        <li>At least 20 manual test cases run with results logged</li>
+        <li>Silent failure modes identified with detection mechanism for each</li>
+      </ul>
+    </div>
+    <div class="sdiv">Key Questions</div>
+    <div class="q-block"><p>Can you explain step-by-step why the agent made each decision in its last 3 test runs?</p><p class="q-sub">If not, observability gap — fix before shipping.</p></div>
+    <div class="q-block"><p>When you change the prompt, how do you know if it got better or worse?</p><p class="q-sub">Prompt changes without evals are changes without feedback.</p></div>
+    <div class="q-block"><p>What are the 10 most likely ways this agent fails silently?</p><p class="q-sub">Silent failures are more dangerous than loud ones.</p></div>
+    <div class="q-block"><p>Does the agent consistently select the right tool — or is it guessing between similar-sounding tools?</p><p class="q-sub">Tool description quality is the most common first failure point.</p></div>
+  </div>
+  <div class="footer"><div class="footer-inner"><div><div class="footer-brand">Agentic AI Product Framework</div><div class="footer-copy">Built by Puru Nayak · Global Product & GTM Leader · May 2026 · Please reference and tag the original author if you share or adapt this.</div></div><div class="footer-links"><a class="footer-link" href="https://github.com/puru-nayak-labs" target="_blank">GitHub</a><a class="footer-link" href="https://www.linkedin.com/in/purnendunayak/" target="_blank">LinkedIn</a></div></div></div>
+</div>
+
+<!-- ═══ STAGE 4 ═══ -->
+<div id="page-s4" class="stage-page">
+  <div class="pipeline-bar"><div class="pipeline-inner"><div class="pipeline-label">Navigate stages</div><div class="pipeline-track">
+    <div class="pipe-step" onclick="showStage('s1')"><span class="pipe-step-num">01</span><div class="pipe-step-name">Triage & Decision Gate</div></div>
+    <div class="pipe-step" onclick="showStage('s2')"><span class="pipe-step-num">02</span><div class="pipe-step-name">Architecture Design</div></div>
+    <div class="pipe-step" onclick="showStage('s3')"><span class="pipe-step-num">03</span><div class="pipe-step-name">Build & Prototype</div></div>
+    <div class="pipe-step active-step" onclick="showStage('s4')"><span class="pipe-step-num">04</span><div class="pipe-step-name">Evaluation & Evals</div></div>
+    <div class="pipe-step" onclick="showStage('s5')"><span class="pipe-step-num">05</span><div class="pipe-step-name">Production & Scale</div></div>
+    <div class="pipe-step" onclick="showStage('s6')"><span class="pipe-step-num">06</span><div class="pipe-step-name">Observability & Cost</div></div>
+    <div class="pipe-step" onclick="showStage('s7')"><span class="pipe-step-num">07</span><div class="pipe-step-name">Self-Improvement</div></div>
+  </div></div></div>
+  <div class="content-wrap">
+    <div class="stage-hero">
+      <div class="stage-eyebrow">Stage 04 · Evaluation & Evals</div>
+      <h2>Eval Infrastructure<br><em>Is the Moat.</em></h2>
+      <p class="stage-hero-desc">LLMs are stochastic. Without systematic evals, you are shipping faith. Eval infra is the continuous measurement system that separates systems that drift from systems that improve.</p>
+      <div class="stage-meta"><span class="stage-badge">Quality-Critical · Week 5–ongoing</span><span class="stage-badge accent">3 Questions</span></div>
+    </div>
+    <div class="stage-progress">
+      <div class="sp-label">7-stage linear progression</div>
+      <div class="sp-track">
+        <div class="sp-step done" onclick="showStage('s1')"><div class="sp-dot">✓</div><div class="sp-name">Triage</div></div>
+        <div class="sp-step done" onclick="showStage('s2')"><div class="sp-dot">✓</div><div class="sp-name">Architecture</div></div>
+        <div class="sp-step done" onclick="showStage('s3')"><div class="sp-dot">✓</div><div class="sp-name">Build</div></div>
+        <div class="sp-step active-sp"><div class="sp-dot">04</div><div class="sp-name">Evaluation</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">05</div><div class="sp-name">Production</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">06</div><div class="sp-name">Observability</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">07</div><div class="sp-name">Self-Improve</div></div>
+      </div>
+      <div class="sp-output"><strong>Stage output</strong>Eval suite · production gate · quality baseline · cost-per-task benchmark</div>
+    </div>
+    <div class="sdiv">Core KPIs with Targets</div>
+    <div class="kpi-grid">
+      <div class="kpi-box dark"><span class="kpi-num">&gt;85%</span><div class="kpi-label">Goal Completion Rate</div><div class="kpi-desc">Tasks reaching success without human intervention.</div></div>
+      <div class="kpi-box dark"><span class="kpi-num">&lt;2%</span><div class="kpi-label">Hallucination Rate</div><div class="kpi-desc">&gt;5% = block the feature.</div></div>
+      <div class="kpi-box dark"><span class="kpi-num">&gt;90%</span><div class="kpi-label">Tool Call Precision</div><div class="kpi-desc">Correct tool, correct params.</div></div>
+      <div class="kpi-box dark"><span class="kpi-num">&lt;10%</span><div class="kpi-label">Human Override Rate</div><div class="kpi-desc">Rising = declining trust.</div></div>
+    </div>
+
+    <!-- NEW: AI Leading Metrics from 0→1 Playbook -->
+    <div class="sdiv new">AI Leading Metrics <span class="new-flag">from 0→1 playbook</span></div>
+    <div class="insight-box">
+      <span class="insight-label">★ Leading vs. lagging — track both, but act on leading</span>
+      <p>Lagging metrics (revenue, churn, NPS) tell you what happened. Leading metrics tell you what's about to happen. For agentic systems: <strong>AI action rate</strong> (% of tasks where agent takes autonomous action without triggering override) and <strong>agent override rate trend</strong> (week-over-week direction) are your most reliable early signals of whether the system is earning trust or losing it. If override rate is rising before users churn, you have 2–3 weeks to fix it.</p>
+    </div>
+    <table class="mtable">
+      <thead><tr><th>Metric</th><th>Type</th><th>Target</th><th>Red Flag</th></tr></thead>
+      <tbody>
+        <tr><td>Goal Completion Rate</td><td>Lagging</td><td class="mtarget">&gt;85%</td><td>Declining week-over-week</td></tr>
+        <tr><td>Hallucination Rate</td><td>Lagging</td><td class="mtarget">&lt;2%</td><td>&gt;5% — block the feature</td></tr>
+        <tr><td>Tool Call Precision</td><td>Leading</td><td class="mtarget">&gt;90%</td><td>Wasted calls = wasted cost</td></tr>
+        <tr class="new-row"><td>AI Action Rate ★</td><td>Leading</td><td class="mtarget">Rising trend</td><td>Flat or declining = agent not earning trust</td></tr>
+        <tr class="new-row"><td>Agent Override Rate Trend ★</td><td>Leading</td><td class="mtarget">Declining</td><td>Rising → users losing confidence 2–3 wks ahead of churn</td></tr>
+        <tr><td>Recovery Success Rate</td><td>Leading</td><td class="mtarget">&gt;70%</td><td>&lt;40% = brittle architecture</td></tr>
+        <tr><td>Human Override Rate</td><td>Lagging</td><td class="mtarget">&lt;10%</td><td>Rising trend = declining trust</td></tr>
+        <tr><td>Prompt Regression Rate</td><td>Gate</td><td class="mtarget">0%</td><td>Any regression blocks deploy</td></tr>
+        <tr><td>Cost per Successful Task</td><td>Lagging</td><td class="mtarget">&lt;ROI threshold</td><td>Rising without quality gain</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sdiv">3-Layer Eval Framework</div>
+    <div class="three-col">
+      <div class="card card-dark"><div class="card-hd">Layer 1 · Offline</div><h3>Before Anything Ships</h3><ul><li>Golden dataset: 100+ real edge cases</li><li>Prompt regression tests on every change</li><li>Benchmark against human baseline</li><li>Tool selection accuracy scored</li></ul></div>
+      <div class="card"><div class="card-hd">Layer 2 · Online</div><h3>In Production, Always</h3><ul><li>A/B prompt variant testing</li><li>Human feedback capture per session</li><li>LLM-as-judge production scoring</li><li>AI action rate and override trend weekly</li></ul></div>
+      <div class="card card-accent"><div class="card-hd">Layer 3 · Agent-Specific</div><h3>Agentic Metrics Only</h3><ul><li>Multi-step goal completion rate</li><li>Tool calls per successful task</li><li>Recovery quality after mid-task failure</li><li>Cost per verified successful outcome</li></ul></div>
+    </div>
+    <div class="sdiv">Key Questions</div>
+    <div class="q-block"><p>Is the golden dataset built from real edge cases and failures — or just happy paths that worked in demos?</p><p class="q-sub">Datasets built from successes measure the wrong thing.</p></div>
+    <div class="q-block"><p>What is the regression gate that must pass before any prompt change reaches production?</p><p class="q-sub">No prompt change ships without running the full eval suite.</p></div>
+    <div class="q-block"><p>Is your AI action rate rising week-over-week — and is override rate declining?</p><p class="q-sub">These are the two leading indicators that your agent is earning trust, not just processing tasks.</p></div>
+  </div>
+  <div class="footer"><div class="footer-inner"><div><div class="footer-brand">Agentic AI Product Framework</div><div class="footer-copy">Built by Puru Nayak · Global Product & GTM Leader · May 2026 · Please reference and tag the original author if you share or adapt this.</div></div><div class="footer-links"><a class="footer-link" href="https://github.com/puru-nayak-labs" target="_blank">GitHub</a><a class="footer-link" href="https://www.linkedin.com/in/purnendunayak/" target="_blank">LinkedIn</a></div></div></div>
+</div>
+
+<!-- ═══ STAGE 5 ═══ -->
+<div id="page-s5" class="stage-page">
+  <div class="pipeline-bar"><div class="pipeline-inner"><div class="pipeline-label">Navigate stages</div><div class="pipeline-track">
+    <div class="pipe-step" onclick="showStage('s1')"><span class="pipe-step-num">01</span><div class="pipe-step-name">Triage & Decision Gate</div></div>
+    <div class="pipe-step" onclick="showStage('s2')"><span class="pipe-step-num">02</span><div class="pipe-step-name">Architecture Design</div></div>
+    <div class="pipe-step" onclick="showStage('s3')"><span class="pipe-step-num">03</span><div class="pipe-step-name">Build & Prototype</div></div>
+    <div class="pipe-step" onclick="showStage('s4')"><span class="pipe-step-num">04</span><div class="pipe-step-name">Evaluation & Evals</div></div>
+    <div class="pipe-step active-step" onclick="showStage('s5')"><span class="pipe-step-num">05</span><div class="pipe-step-name">Production & Scale</div></div>
+    <div class="pipe-step" onclick="showStage('s6')"><span class="pipe-step-num">06</span><div class="pipe-step-name">Observability & Cost</div></div>
+    <div class="pipe-step" onclick="showStage('s7')"><span class="pipe-step-num">07</span><div class="pipe-step-name">Self-Improvement</div></div>
+  </div></div></div>
+  <div class="content-wrap">
+    <div class="stage-hero">
+      <div class="stage-eyebrow">Stage 05 · Production & Scale</div>
+      <h2>Where Good Systems<br><em>Break — and Hold.</em></h2>
+      <p class="stage-hero-desc">Production reveals every assumption made in development. Latency spikes, context overflows, security vulnerabilities, and cascading tool failures emerge under real load. Anticipate them before go-live.</p>
+      <div class="stage-meta"><span class="stage-badge">Ops-Critical · Week 8–ongoing</span><span class="stage-badge accent">2 Questions</span></div>
+    </div>
+    <div class="stage-progress">
+      <div class="sp-label">7-stage linear progression</div>
+      <div class="sp-track">
+        <div class="sp-step done" onclick="showStage('s1')"><div class="sp-dot">✓</div><div class="sp-name">Triage</div></div>
+        <div class="sp-step done" onclick="showStage('s2')"><div class="sp-dot">✓</div><div class="sp-name">Architecture</div></div>
+        <div class="sp-step done" onclick="showStage('s3')"><div class="sp-dot">✓</div><div class="sp-name">Build</div></div>
+        <div class="sp-step done" onclick="showStage('s4')"><div class="sp-dot">✓</div><div class="sp-name">Evaluation</div></div>
+        <div class="sp-step active-sp"><div class="sp-dot">05</div><div class="sp-name">Production</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">06</div><div class="sp-name">Observability</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">07</div><div class="sp-name">Self-Improve</div></div>
+      </div>
+      <div class="sp-output"><strong>Stage output</strong>Hardened · secure · monitored · rollback-ready</div>
+    </div>
+    <div class="sdiv">Production KPIs</div>
+    <div class="kpi-grid">
+      <div class="kpi-box dark"><span class="kpi-num">&gt;99.5%</span><div class="kpi-label">Agent Uptime</div><div class="kpi-desc">% responding within SLA.</div></div>
+      <div class="kpi-box dark"><span class="kpi-num">&lt;0.5%</span><div class="kpi-label">Total Error Rate</div><div class="kpi-desc">Model + tool + timeout combined.</div></div>
+      <div class="kpi-box dark"><span class="kpi-num">&lt;70%</span><div class="kpi-label">Context Utilization</div><div class="kpi-desc">Avg % of context window. Headroom needed.</div></div>
+      <div class="kpi-box dark"><span class="kpi-num">0</span><div class="kpi-label">PII Exposure Events</div><div class="kpi-desc">Zero tolerance.</div></div>
+    </div>
+    <div class="sdiv">Production Readiness Checklists</div>
+    <div class="two-col">
+      <div class="checklist-wrap">
+        <div class="checklist-header accent">Security & Governance — Before Go-Live</div>
+        <ul class="checklist">
+          <li>Prompt injection tested across all input surfaces</li>
+          <li>PII detection at input AND output layers</li>
+          <li>RBAC enforced per user role on all tool classes</li>
+          <li>Full audit trail confirmed end-to-end</li>
+          <li>Data residency compliance verified</li>
+          <li>Kill switch tested in staging</li>
+          <li>Human escalation under 60 seconds tested</li>
+        </ul>
+      </div>
+      <div class="checklist-wrap">
+        <div class="checklist-header">Reliability Engineering — Before Go-Live</div>
+        <ul class="checklist">
+          <li>Model API rate limit handling and backoff</li>
+          <li>Tool timeout handling and retry logic tested</li>
+          <li>Context window overflow graceful truncation</li>
+          <li>Infinite loop prevention: max-turn caps</li>
+          <li>Partial completion state recovery tested</li>
+          <li>Circuit breakers on all external tool calls</li>
+          <li>Prompt rollback procedure rehearsed</li>
+        </ul>
+      </div>
+    </div>
+    <div class="sdiv">Key Questions</div>
+    <div class="q-block"><p>If the model API goes down mid-execution — does the task resume, fail gracefully, or corrupt state?</p><p class="q-sub">Partial failure will happen. Design for it explicitly.</p></div>
+    <div class="q-block"><p>If a bad prompt change reaches production, what is the rollback procedure and how long does it take?</p><p class="q-sub">Should be as fast and practiced as a code rollback.</p></div>
+  </div>
+  <div class="footer"><div class="footer-inner"><div><div class="footer-brand">Agentic AI Product Framework</div><div class="footer-copy">Built by Puru Nayak · Global Product & GTM Leader · May 2026 · Please reference and tag the original author if you share or adapt this.</div></div><div class="footer-links"><a class="footer-link" href="https://github.com/puru-nayak-labs" target="_blank">GitHub</a><a class="footer-link" href="https://www.linkedin.com/in/purnendunayak/" target="_blank">LinkedIn</a></div></div></div>
+</div>
+
+<!-- ═══ STAGE 6 ═══ -->
+<div id="page-s6" class="stage-page">
+  <div class="pipeline-bar"><div class="pipeline-inner"><div class="pipeline-label">Navigate stages</div><div class="pipeline-track">
+    <div class="pipe-step" onclick="showStage('s1')"><span class="pipe-step-num">01</span><div class="pipe-step-name">Triage & Decision Gate</div></div>
+    <div class="pipe-step" onclick="showStage('s2')"><span class="pipe-step-num">02</span><div class="pipe-step-name">Architecture Design</div></div>
+    <div class="pipe-step" onclick="showStage('s3')"><span class="pipe-step-num">03</span><div class="pipe-step-name">Build & Prototype</div></div>
+    <div class="pipe-step" onclick="showStage('s4')"><span class="pipe-step-num">04</span><div class="pipe-step-name">Evaluation & Evals</div></div>
+    <div class="pipe-step" onclick="showStage('s5')"><span class="pipe-step-num">05</span><div class="pipe-step-name">Production & Scale</div></div>
+    <div class="pipe-step active-step" onclick="showStage('s6')"><span class="pipe-step-num">06</span><div class="pipe-step-name">Observability & Cost</div></div>
+    <div class="pipe-step" onclick="showStage('s7')"><span class="pipe-step-num">07</span><div class="pipe-step-name">Self-Improvement</div></div>
+  </div></div></div>
+  <div class="content-wrap">
+    <div class="stage-hero">
+      <div class="stage-eyebrow">Stage 06 · Observability & Token Economics</div>
+      <h2>You Cannot Improve<br><em>What You Cannot See.</em></h2>
+      <p class="stage-hero-desc">Observability and token economics run from week one. Treat AI like cloud infrastructure: per-unit cost discipline, routing optimization, continuous efficiency improvement.</p>
+      <div class="stage-meta"><span class="stage-badge">Continuous · Week 1–forever</span><span class="stage-badge accent">2 Questions</span></div>
+    </div>
+    <div class="stage-progress">
+      <div class="sp-label">7-stage linear progression</div>
+      <div class="sp-track">
+        <div class="sp-step done" onclick="showStage('s1')"><div class="sp-dot">✓</div><div class="sp-name">Triage</div></div>
+        <div class="sp-step done" onclick="showStage('s2')"><div class="sp-dot">✓</div><div class="sp-name">Architecture</div></div>
+        <div class="sp-step done" onclick="showStage('s3')"><div class="sp-dot">✓</div><div class="sp-name">Build</div></div>
+        <div class="sp-step done" onclick="showStage('s4')"><div class="sp-dot">✓</div><div class="sp-name">Evaluation</div></div>
+        <div class="sp-step done" onclick="showStage('s5')"><div class="sp-dot">✓</div><div class="sp-name">Production</div></div>
+        <div class="sp-step active-sp"><div class="sp-dot">06</div><div class="sp-name">Observability</div></div>
+        <div class="sp-step upcoming"><div class="sp-dot">07</div><div class="sp-name">Self-Improve</div></div>
+      </div>
+      <div class="sp-output"><strong>Stage output</strong>Cost/task baseline · trace infra live · routing optimized</div>
+    </div>
+    <div class="sdiv">Token Economics KPIs</div>
+    <div class="kpi-grid">
+      <div class="kpi-box dark"><span class="kpi-num">$/task</span><div class="kpi-label">Cost per Successful Task</div><div class="kpi-desc">Only metric mapping to ROI. Track from week one.</div></div>
+      <div class="kpi-box dark"><span class="kpi-num">&gt;60%</span><div class="kpi-label">Cache Hit Rate</div><div class="kpi-desc">Direct 1:1 with cost reduction.</div></div>
+      <div class="kpi-box dark"><span class="kpi-num">&lt;3×</span><div class="kpi-label">Tool Call Amplification</div><div class="kpi-desc">High ratio = planning or prompt issue.</div></div>
+      <div class="kpi-box dark"><span class="kpi-num">✓</span><div class="kpi-label">Model Routing Efficiency</div><div class="kpi-desc">Frontier prices paid for cheap subtasks?</div></div>
+    </div>
+    <div class="full-callout">
+      <h3>Track Cost Per Successful Outcome.<br>Not Cost Per API Call.</h3>
+      <p>Total cost from initiation through verified completion — including retries, tool calls, and human review time.</p>
+    </div>
+    <div class="sdiv">Key Questions</div>
+    <div class="q-block"><p>What is cost per successful task — and how does it compare to the fully-loaded human cost?</p><p class="q-sub">This is the ROI equation. Track from week one.</p></div>
+    <div class="q-block"><p>What is the prompt cache hit rate — is the system prompt structured to maximize the static prefix?</p><p class="q-sub">Prompt caching cuts costs 60–80%. Most teams never configure it.</p></div>
+  </div>
+  <div class="footer"><div class="footer-inner"><div><div class="footer-brand">Agentic AI Product Framework</div><div class="footer-copy">Built by Puru Nayak · Global Product & GTM Leader · May 2026 · Please reference and tag the original author if you share or adapt this.</div></div><div class="footer-links"><a class="footer-link" href="https://github.com/puru-nayak-labs" target="_blank">GitHub</a><a class="footer-link" href="https://www.linkedin.com/in/purnendunayak/" target="_blank">LinkedIn</a></div></div></div>
+</div>
+
+<!-- ═══ STAGE 7 ═══ -->
+<div id="page-s7" class="stage-page">
+  <div class="pipeline-bar"><div class="pipeline-inner"><div class="pipeline-label">Navigate stages</div><div class="pipeline-track">
+    <div class="pipe-step" onclick="showStage('s1')"><span class="pipe-step-num">01</span><div class="pipe-step-name">Triage & Decision Gate</div></div>
+    <div class="pipe-step" onclick="showStage('s2')"><span class="pipe-step-num">02</span><div class="pipe-step-name">Architecture Design</div></div>
+    <div class="pipe-step" onclick="showStage('s3')"><span class="pipe-step-num">03</span><div class="pipe-step-name">Build & Prototype</div></div>
+    <div class="pipe-step" onclick="showStage('s4')"><span class="pipe-step-num">04</span><div class="pipe-step-name">Evaluation & Evals</div></div>
+    <div class="pipe-step" onclick="showStage('s5')"><span class="pipe-step-num">05</span><div class="pipe-step-name">Production & Scale</div></div>
+    <div class="pipe-step" onclick="showStage('s6')"><span class="pipe-step-num">06</span><div class="pipe-step-name">Observability & Cost</div></div>
+    <div class="pipe-step active-step" onclick="showStage('s7')"><span class="pipe-step-num">07</span><div class="pipe-step-name">Self-Improvement</div></div>
+  </div></div></div>
+  <div class="content-wrap">
+    <div class="stage-hero">
+      <div class="stage-eyebrow">Stage 07 · Self-Improvement Loop</div>
+      <h2>The System That Gets<br><em>Better Without You.</em></h2>
+      <p class="stage-hero-desc">Closed-loop improvement is the frontier. Production failures become training data, prompts optimize from real feedback, the system compounds in capability — within governance guardrails designed from day one. A self-improving agent is the ultimate data flywheel: every production run is a training signal that widens the moat.</p>
+      <div class="stage-meta"><span class="stage-badge">Frontier Capability · Month 3+</span><span class="stage-badge accent">3 Questions</span></div>
+    </div>
+    <div class="stage-progress">
+      <div class="sp-label">7-stage linear progression</div>
+      <div class="sp-track">
+        <div class="sp-step done" onclick="showStage('s1')"><div class="sp-dot">✓</div><div class="sp-name">Triage</div></div>
+        <div class="sp-step done" onclick="showStage('s2')"><div class="sp-dot">✓</div><div class="sp-name">Architecture</div></div>
+        <div class="sp-step done" onclick="showStage('s3')"><div class="sp-dot">✓</div><div class="sp-name">Build</div></div>
+        <div class="sp-step done" onclick="showStage('s4')"><div class="sp-dot">✓</div><div class="sp-name">Evaluation</div></div>
+        <div class="sp-step done" onclick="showStage('s5')"><div class="sp-dot">✓</div><div class="sp-name">Production</div></div>
+        <div class="sp-step done" onclick="showStage('s6')"><div class="sp-dot">✓</div><div class="sp-name">Observability</div></div>
+        <div class="sp-step active-sp"><div class="sp-dot">07</div><div class="sp-name">Self-Improve</div></div>
+      </div>
+      <div class="sp-output"><strong>Stage output</strong>Self-improving system · data flywheel active · moat compounding</div>
+    </div>
+    <div class="sdiv">Self-Improvement KPIs</div>
+    <div class="kpi-grid">
+      <div class="kpi-box dark"><span class="kpi-num">↑</span><div class="kpi-label">Goal Completion Trend</div><div class="kpi-desc">Should improve week-over-week.</div></div>
+      <div class="kpi-box dark"><span class="kpi-num">↓</span><div class="kpi-label">Human Override Rate</div><div class="kpi-desc">Declines as agent learns from corrections.</div></div>
+      <div class="kpi-box dark"><span class="kpi-num">↑</span><div class="kpi-label">Eval Coverage</div><div class="kpi-desc">Dataset grows from every failure automatically.</div></div>
+      <div class="kpi-box dark"><span class="kpi-num">0</span><div class="kpi-label">Ungated Prompt Changes</div><div class="kpi-desc">Every self-generated update needs human approval.</div></div>
+    </div>
+    <div class="sdiv">6 Mechanisms of Self-Improvement</div>
+    <div class="three-col">
+      <div class="card card-dark"><div class="card-hd">Mechanism 1</div><h3>Feedback Capture</h3><ul><li>User corrections → labeled failure cases</li><li>Override events → failure library</li><li>Task abandonment as implicit negative signal</li><li>A/B winner signals → prompt queue</li></ul></div>
+      <div class="card"><div class="card-hd">Mechanism 2</div><h3>Reflection & Self-Critique</h3><ul><li>Agent critiques output before presenting</li><li>ReAct observation after each action</li><li>Constitutional AI self-evaluation</li><li>Cross-agent verification</li></ul></div>
+      <div class="card"><div class="card-hd">Mechanism 3</div><h3>Prompt Auto-Optimization</h3><ul><li>DSPy automated prompt optimization</li><li>Failure replay → targeted prompt patches</li><li>Few-shot refresh from recent successes</li><li>A/B tests with significance gates</li></ul></div>
+      <div class="card"><div class="card-hd">Mechanism 4</div><h3>Memory Personalization</h3><ul><li>User preference learning</li><li>Org knowledge base continuous updates</li><li>Retrieval ranking tuned from corrections</li><li>Episodic memory pruning</li></ul></div>
+      <div class="card card-accent"><div class="card-hd">Mechanism 5</div><h3>Synthetic Eval Generation</h3><ul><li>Failed tasks → auto regression cases</li><li>Edge case synthesis from failure taxonomy</li><li>Red-team agents generating adversarial examples</li><li>Golden dataset grows from every failure</li></ul></div>
+      <div class="card"><div class="card-hd">Mechanism 6</div><h3>Fine-Tuning Pipeline</h3><ul><li>RLHF from curated preference data</li><li>RLAIF: AI feedback to scale labeling</li><li>LoRA adapters for task-specific behavior</li><li>Continuous fine-tuning with drift detection</li></ul></div>
+    </div>
+    <!-- NEW: Data flywheel framing -->
+    <div class="sdiv new">Data Flywheel & Moat <span class="new-flag">from 0→1 playbook</span></div>
+    <div class="insight-box">
+      <span class="insight-label">★ Self-improvement is your moat — build it from day one</span>
+      <p>A self-improving agent is the ultimate data flywheel: each production run generates signals that make the next run better. Combined with workflow integration (switching cost) and network effects from multi-user memory, this creates a compounding competitive advantage that a newer agent without your data cannot replicate. The moat is not the model — it is the feedback loop architecture built into the system from Stage 1. Teams that design self-improvement as an afterthought lose this entirely.</p>
+    </div>
+    <div class="sdiv">Governance Checklist — Required Before Any Autonomous Improvement Ships</div>
+    <div class="checklist-wrap">
+      <div class="checklist-header gold">Non-negotiable governance gates</div>
+      <ul class="checklist">
+        <li>Every production failure automatically generates a regression test case</li>
+        <li>Circuit breaker defined: conditions that pause the improvement loop</li>
+        <li>Human approval gate required before any self-generated prompt update reaches production</li>
+        <li>RLAIF judge model calibrated against human ground truth</li>
+        <li>Drift detection active: alerts when behavior shifts outside defined bounds</li>
+        <li>Synthetic evals reviewed before entering golden dataset</li>
+      </ul>
+    </div>
+    <div class="sdiv">Key Questions</div>
+    <div class="q-block"><p>When the agent fails today, does that failure automatically become a test case preventing the same failure tomorrow?</p><p class="q-sub">If failures don't generate evals, the same tuition gets paid twice.</p></div>
+    <div class="q-block"><p>How do you detect when the self-improvement loop is making things worse — and what triggers the circuit breaker?</p><p class="q-sub">Autonomous improvement without guardrails is autonomous drift.</p></div>
+    <div class="q-block"><p>Is your self-improvement loop generating compounding data advantage — or are you just logging without acting on it?</p><p class="q-sub">The moat is built from the feedback loop, not the model. Act on every signal.</p></div>
+    <div class="pullquote">
+      <p>The goal is a system that treats every failure as a lesson, every correction as a label, and every day in production as a training run — within governance guardrails designed from day one. That is not just reliability. That is the moat.</p>
+      <div class="pullquote-attr">— Framework Closing Principle · Puru Nayak</div>
+    </div>
+  </div>
+  <div class="footer"><div class="footer-inner"><div><div class="footer-brand">Agentic AI Product Framework</div><div class="footer-copy">Built by Puru Nayak · Global Product & GTM Leader · May 2026 · Please reference and tag the original author if you share or adapt this.</div></div><div class="footer-links"><a class="footer-link" href="https://github.com/puru-nayak-labs" target="_blank">GitHub</a><a class="footer-link" href="https://www.linkedin.com/in/purnendunayak/" target="_blank">LinkedIn</a></div></div></div>
+</div>
+
+<script>
+const stageMap={overview:'page-overview',s1:'page-s1',s2:'page-s2',s3:'page-s3',s4:'page-s4',s5:'page-s5',s6:'page-s6',s7:'page-s7'};
+const navOrder=['overview','s1','s2','s3','s4','s5','s6','s7'];
+function showStage(id){
+  Object.values(stageMap).forEach(pid=>{const el=document.getElementById(pid);if(el)el.classList.remove('visible');});
+  const t=document.getElementById(stageMap[id]);
+  if(t)t.classList.add('visible');
+  document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active',navOrder[i]===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
